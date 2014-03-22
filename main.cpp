@@ -1,8 +1,18 @@
-#include <QCoreApplication>
+#include "Grafo.h"
 
-int main(int argc, char *argv[])
+int main()
 {
-    QCoreApplication a(argc, argv);
+    Graph<QString> g;
+    g.addVertex("algo");
+    g.addVertex("nada");
+    g.addVertex("some");
+    g.printVertexList();
+    g.addConnection("algo", "nada", 15);
+    g.addConnection("some", "nada", 10);
+    g.removeVertex("nalda");
+    g.printVertexList();
+    g.removeConnection("some", "nada");
+    g.printVertexList();
 
-    return a.exec();
+    return 0;
 }
