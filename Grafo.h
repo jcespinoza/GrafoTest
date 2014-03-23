@@ -23,7 +23,7 @@ public:
     }
     Vertex(J d): data(d), next(NULL), firstEdge(NULL), count(0){}
 
-    void addEdge(Vertex<J>* where, int value=0){
+    void addEdge(Vertex<J>* where, double value=0){
         if(where == NULL)
             return;
         addEdge(new Edge<J>(where,value));
@@ -171,12 +171,12 @@ class Edge{
 public:
     Vertex<K> *destin;
     Edge<K>* next;
-    int value;
+    double value;
     Edge(){
         destin = NULL;
         next = NULL;
     }
-    Edge(Vertex<K>* dest, int cost): destin(dest), next(NULL), value(cost){}
+    Edge(Vertex<K>* dest, double cost): destin(dest), next(NULL), value(cost){}
 };
 
 template <class T>
@@ -203,16 +203,34 @@ public:
         updateCount();
     }
 
-    void addConnection(T fromV, T toV, int cost){
+    void addConnection(T fromV, T toV, double cost){
         if(!count || !vertexExists(fromV) || !vertexExists(toV))
             return;
         getVertex(fromV)->addEdge(getVertex(toV), cost);
+    }
+
+    Edge<T>* getConnection(T fromV, T toV){
+        if(!count || !vertexExists(fromV) || !vertexExists(toV))
+            return NULL;
+        return getVertex(fromV)->getEdge(getVertex(toV));
+    }
+
+    void updateConnection(T fromV, T toV, double nValue){
+        Edge<T> *edge = getConnection(fromV, toV);
+        if(edge)
+            edge->value = nValue;
     }
 
     void removeConnection(T fromV, T with){
         if(!count || !vertexExists(fromV) || !vertexExists(with))
             return;
         getVertex(fromV)->removeAdjaceny(getVertex(with));
+    }
+
+    bool connectionExists(T fromV, T toV){
+        if(!count || !vertexExists(fromV) || !vertexExists(toV))
+            return false;
+        return getVertex(fromV)->hasAdjacencyWith(getVertex(toV));
     }
 
     bool vertexExists(T data){
