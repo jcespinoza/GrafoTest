@@ -254,7 +254,15 @@ public:
     void removeVertex(Vertex<T>* target){
         if(target == NULL)
             return;
+
         if(count && vertexExists(target->data) ){
+            //Remove adyacency with this vertex
+            Vertex<T>* cursor = firstVertex;
+            while(cursor != NULL){
+                cursor->removeAdyaceny(target);
+                cursor = cursor->next;
+            }
+            //Remove the vertex ifself
             if(target == firstVertex){
                 firstVertex = target->next;
                 target->next = NULL;
