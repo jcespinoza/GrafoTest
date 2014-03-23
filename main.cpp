@@ -9,7 +9,9 @@ int main()
     g.printVertexList();
     g.addConnection("algo", "nada", 15);
     g.addConnection("some", "nada", 10);
-    g.removeVertex("nalda");
+    g.addConnection("some", "algo", 10);
+    g.printVertexList();
+    g.removeVertex("algo");
     g.printVertexList();
     g.removeConnection("some", "nada");
     g.printVertexList();
