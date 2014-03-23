@@ -42,7 +42,7 @@ public:
         updateCount();
     }
 
-    bool hasAdyacencyWith(Vertex<J>* w){
+    bool hasAdjacencyWith(Vertex<J>* w){
         Edge<J>* cursor = firstEdge;
         bool found = false;
         while(cursor != NULL){
@@ -141,7 +141,7 @@ public:
         return result;
     }
 
-    void removeAdyaceny(Vertex<J>* with){
+    void removeAdjaceny(Vertex<J>* with){
         removeEdge(getEdge(with));
     }
 
@@ -212,7 +212,7 @@ public:
     void removeConnection(T fromV, T with){
         if(!count || !vertexExists(fromV) || !vertexExists(with))
             return;
-        getVertex(fromV)->removeAdyaceny(getVertex(with));
+        getVertex(fromV)->removeAdjaceny(getVertex(with));
     }
 
     bool vertexExists(T data){
@@ -259,7 +259,7 @@ public:
             //Remove adyacency with this vertex
             Vertex<T>* cursor = firstVertex;
             while(cursor != NULL){
-                cursor->removeAdyaceny(target);
+                cursor->removeAdjaceny(target);
                 cursor = cursor->next;
             }
             //Remove the vertex ifself
