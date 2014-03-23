@@ -131,8 +131,8 @@ public:
         updateCount();
     }
 
-    ListPointerT< Edge<J> > getAllEdges(){
-        ListPointerT< Edge<J> > result;
+    ListPointerT< Edge<J>* > getAllEdges(){
+        ListPointerT< Edge<J>* > result;
         Edge<J>* cursor = firstEdge;
         while(cursor){
             result.insert(cursor);
