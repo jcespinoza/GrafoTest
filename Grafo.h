@@ -145,7 +145,7 @@ public:
     }
 
     void printEdgeList(){
-        qDebug() << "\n" << data << "Edges count: " << count;
+        qDebug() << data << "Edges count: " << count;
         Edge<J>* cursor = firstEdge;
         int i = 0;
         while(cursor != NULL){
@@ -220,7 +220,7 @@ public:
         ListPointerT<T> result;
         Vertex<T>* cursor = firstVertex;
         while(cursor){
-            if(cursor->data != except)
+            if( !(cursor->data == except))
                 result.insert(cursor->data);
             cursor = cursor->next;
         }
@@ -273,6 +273,19 @@ public:
             cursor = cursor->next;
         }
         return NULL;
+    }
+
+    T getVertexWith(T data, bool &ok){
+        Vertex<T>* cursor = firstVertex;
+        while(cursor != NULL){
+            if(cursor->data == data){
+                ok = true;
+                return cursor->data;
+            }
+            cursor = cursor->next;
+        }
+        ok = false;
+        return T();
     }
 
     Vertex<T>* getVertex(int index){
