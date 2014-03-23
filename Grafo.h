@@ -131,6 +131,16 @@ public:
         updateCount();
     }
 
+    ListPointerT< Edge<J> > getAllEdges(){
+        ListPointerT< Edge<J> > result;
+        Edge<J>* cursor = firstEdge;
+        while(cursor){
+            result.insert(cursor);
+            cursor = cursor->next;
+        }
+        return result;
+    }
+
     void removeAdyaceny(Vertex<J>* with){
         removeEdge(getEdge(with));
     }
@@ -222,6 +232,16 @@ public:
         while(cursor){
             if( !(cursor->data == except))
                 result.insert(cursor->data);
+            cursor = cursor->next;
+        }
+        return result;
+    }
+
+    ListPointerT<T> getAllVertices(){
+        ListPointerT<T> result;
+        Vertex<T>* cursor = firstVertex;
+        while(cursor){
+            result.insert(cursor->data);
             cursor = cursor->next;
         }
         return result;
