@@ -97,7 +97,7 @@ public:
         return NULL;
     }
 
-    Edge<J>* getVertex(int index){
+    Edge<J>* getEdge(int index){
         Edge<J>* cursor = firstEdge;
         int current = 0;
         while(cursor != NULL){
@@ -107,6 +107,13 @@ public:
             current++;
         }
         return NULL;
+    }
+
+    double getEdgeValue(int index){
+        Edge<J>* cursor = getEdge(index);
+        if(cursor != NULL)
+            return cursor->value;
+        return -1;
     }
 
     void removeEdge(Edge<J>* target){
@@ -136,6 +143,16 @@ public:
         Edge<J>* cursor = firstEdge;
         while(cursor){
             result.insert(cursor);
+            cursor = cursor->next;
+        }
+        return result;
+    }
+
+    ListPointerT<double> getEdgeValues(){
+        ListPointerT<double> result;
+        Edge<J>* cursor = firstEdge;
+        while(cursor){
+            result.insert(cursor->value);
             cursor = cursor->next;
         }
         return result;
@@ -244,12 +261,28 @@ public:
         return found;
     }
 
+    ListPointerT< Vertex<T>* > getLowesCostPath(T fromV, T toV){
+        ListPointerT< Vertex<T>* > unvisited = getAllVertices();
+        ListPointerT< Vertex<T>* > visited;
+        ListPointerT<double> D;
+    }
+
     ListPointerT<T> getAllBut(T except){
         ListPointerT<T> result;
         Vertex<T>* cursor = firstVertex;
         while(cursor){
             if( !(cursor->data == except))
                 result.insert(cursor->data);
+            cursor = cursor->next;
+        }
+        return result;
+    }
+
+    ListPointerT< Vertex<T>* > getAllVertices(bool ok=0){
+        ListPointerT< Vertex<T>* > result;
+        Vertex<T>* cursor = firstVertex;
+        while(cursor){
+            result.insert(cursor);
             cursor = cursor->next;
         }
         return result;
