@@ -1,6 +1,7 @@
 #ifndef GRAFO_H
 #define GRAFO_H
 #include <iostream>
+#include <limits>
 #include <QDebug>
 #include "../TDA/listpointert.h"
 
@@ -112,6 +113,13 @@ public:
     double getEdgeValue(int index){
         Edge<J>* cursor = getEdge(index);
         if(cursor != NULL)
+            return cursor->value;
+        return -1;
+    }
+
+    double getEdgeValue(Vertex<J>* who){
+        Edge<J>* cursor = getEdge(who);
+        if(cursor)
             return cursor->value;
         return -1;
     }
@@ -261,10 +269,90 @@ public:
         return found;
     }
 
-    ListPointerT< Vertex<T>* > getLowesCostPath(T fromV, T toV){
-        ListPointerT< Vertex<T>* > unvisited = getAllVertices();
+    ListPointerT< Vertex<T>* > getLowesCostPath(Vertex<T>* originVertex, Vertex<T>* toV){
+        ListPointerT< Vertex<T>* > shortesPath;
+        if(!originVertex || !toV)
+            return shortesPath;
+        bool ok;
+        ListPointerT< Vertex<T>* > unvisited = getAllVertices(ok);
+        ListPointerT< Vertex<T>* > universe = getAllVertices(ok);
         ListPointerT< Vertex<T>* > visited;
-        ListPointerT<double> D;
+
+        int dSize = universe.getCount();
+        double D[dSize];
+        Vertex<T>* predecesor[dSize];
+
+        for(int i = 0; i < dSize; i++){
+            Vertex<T>* current = universe.get(i);
+            double dist = originVertex->getEdgeValue(current);
+            predecesor[i] = NULL;
+            if(originVertex == current){
+                dist = 0;
+                predecesor[i] = originVertex;
+                //make sure to check if the predecesor is itself
+            }else if(dist == -1){
+                dist = std::numeric_limits<double>::max();
+            }else{
+                predecesor[i] = originVertex;
+            }
+            D[i] = dist;
+            qDebug() << i << "Distance from" << originVertex->data << "to" << current->data << "is" << dist;
+        }
+
+        visited.insert(unvisited.disconnect(originVertex)->value);
+        Vertex<T>* actual;
+
+        while (unvisited.getCount() > 0) {
+            qDebug() << "There are" << unvisited.getCount() << "unvisited vertices.";
+            actual = unvisited.getFirst();
+            qDebug() << "Let Actual be" << actual->data;
+            int indexV = universe.getIndex(actual);
+            qDebug() << "Which has an index of" << indexV << "in universe";
+            visited.insert(unvisited.disconnect(actual)->value);
+            qDebug() << "First mark it as visited";
+            ListPointerT< Edge<T>* > edges = actual->getAllEdges();
+            qDebug() << "Get all its edges, which are" << edges.getCount();
+            for(int i = 0; i < edges.getCount(); i++){
+                Edge<T>* edge = edges.get(i);
+                qDebug() << "Let's go with the edge to" << edge->destin->data << ", call it U";
+                int indexU = universe.getIndex(edge->destin);
+                qDebug() << "Which has an index of" << indexU << "in universe";
+                double N = D[indexV]+edge->value;
+                qDebug() << "Save the total distance from Source to Actual + (Actual to U)" << D[indexV] << "+" << edge->value << "and call it N";
+                qDebug() << "Compare N" << N << "with the distance to U" << D[indexU];
+                if(D[indexU] > N){
+                    qDebug() << "N was smaller, then update the distance stored for U";
+                    D[indexU] = N;
+                    qDebug() << "Update the Predecesor registry. To get to" << edge->destin->data << "first you have to go to" << actual->data;
+                    predecesor[indexU] = actual;
+                }
+            }
+        }
+        int indexTo = universe.getIndex(toV);
+        for(int i = 0; i < dSize; i++){
+            Vertex<T>* current = universe.get(i);
+            qDebug() << i << "Distance from" << originVertex->data << "to" << current->data << "is" << D[i];
+        }
+        qDebug() << "Shortest Path cost:" << D[indexTo];
+        if(D[indexTo] != std::numeric_limits<double>::max()){
+            int nextIndex = indexTo;
+            bool reachedSource;
+            while(!reachedSource){
+                Vertex<T>* preVertex = predecesor[nextIndex];
+                shortesPath.insert(0, preVertex);
+                if(preVertex == originVertex)
+                    reachedSource = true;
+                nextIndex = universe.getIndex(preVertex);
+            }
+        }
+
+        return shortesPath;
+    }
+
+
+
+    ListPointerT< Vertex<T>* > getLowesCostPath(T fromV, T toV){
+        return getLowesCostPath(getVertex(fromV), getVertex(toV));
     }
 
     ListPointerT<T> getAllBut(T except){
@@ -278,7 +366,7 @@ public:
         return result;
     }
 
-    ListPointerT< Vertex<T>* > getAllVertices(bool ok=0){
+    ListPointerT< Vertex<T>* > getAllVertices(bool ok){
         ListPointerT< Vertex<T>* > result;
         Vertex<T>* cursor = firstVertex;
         while(cursor){
@@ -333,10 +421,15 @@ public:
     }
 
     int indexOfVertex(T data){
+        return indexOfVertex(getVertex(data));
+    }
+
+    int indexOfVertex(Vertex<T>* target){
+        if(!target) return -1;
         Vertex<T>* cursor = firstVertex;
         bool index = 0;
         while(cursor != NULL){
-            if(cursor->data == data)
+            if(cursor == target)
                 return index;
             cursor = cursor->next;
             index++;
